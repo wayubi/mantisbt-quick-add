@@ -1,0 +1,9 @@
+<?php
+
+$s_plugin_QuickAdd_title = 'Quick Add Task';
+$s_plugin_QuickAdd_description = 'Press Q to quickly add a task from any page';
+
+$s_plugin_QuickAdd_modal_title = 'Quick Add Task';
+$s_plugin_QuickAdd_submit_button = 'Create Task';
+$s_plugin_QuickAdd_error_no_project = 'Could not determine the project.';
+$s_plugin_QuickAdd_error_no_category = 'Could not determine the category.';

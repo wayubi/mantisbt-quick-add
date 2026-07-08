@@ -1,0 +1,117 @@
+<?php
+
+class QuickAddPlugin extends MantisPlugin {
+    function register() {
+        $this->name = plugin_lang_get('title');
+        $this->description = plugin_lang_get('description');
+        $this->version = '1.0';
+        $this->requires = array(
+            'MantisCore' => '2.0.0',
+        );
+        $this->author = 'W. Latif Ayubi';
+    }
+
+    function hooks() {
+        return array(
+            'EVENT_LAYOUT_RESOURCES' => 'resources',
+            'EVENT_LAYOUT_BODY_END' => 'modal_html',
+        );
+    }
+
+    function resources() {
+        if (!auth_is_user_authenticated()) {
+            return '';
+        }
+
+        return '<script src="' . plugin_file('quick_add.js') . '"></script>';
+    }
+
+    function modal_html() {
+        if (!auth_is_user_authenticated()) {
+            return;
+        }
+
+        $t_user_id = auth_get_current_user_id();
+        $t_project_ids = user_get_accessible_projects($t_user_id);
+
+        $t_default_project_id = 0;
+        foreach ($t_project_ids as $t_id) {
+            $t_can_report = access_has_project_level(config_get('report_bug_threshold', null, $t_user_id, $t_id), $t_id, $t_user_id);
+            if (!$t_can_report) {
+                continue;
+            }
+            if ($t_id == 1) {
+                $t_default_project_id = 1;
+                break;
+            }
+            if ($t_default_project_id === 0) {
+                $t_default_project_id = $t_id;
+            }
+        }
+
+        if ($t_default_project_id === 0) {
+            return;
+        }
+
+        ob_start();
+        print_project_option_list($t_default_project_id, false, null, false, true);
+        $t_project_options = ob_get_clean();
+
+        $t_form_action = plugin_page('quick_add');
+        $t_today = date('Y-m-d');
+        $t_security_token = form_security_field('quick_add');
+
+        $t_ajax_url = plugin_page('quick_add_ajax');
+        return '
+<div class="modal fade" id="quick-add-modal" tabindex="-1" role="dialog" data-quick-add-ajax-url="' . $t_ajax_url . '">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">' . plugin_lang_get('modal_title') . '</h4>
+      </div>
+      <form method="post" action="' . $t_form_action . '" id="quick-add-form">
+        ' . $t_security_token . '
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="quick-add-project">' . lang_get('project_name') . '</label>
+            <select id="quick-add-project" name="project_id" class="form-control input-sm">
+              ' . $t_project_options . '
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="quick-add-category"><span class="required">*</span> ' . lang_get('category') . '</label>
+            <select id="quick-add-category" name="category_id" class="form-control input-sm" required>
+              <option value="">' . lang_get('select_option') . '</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="quick-add-summary"><span class="required">*</span> ' . lang_get('summary') . '</label>
+            <input type="text" id="quick-add-summary" name="summary" class="form-control input-sm" maxlength="128" required autocomplete="off" />
+          </div>
+          <div class="form-group">
+            <label for="quick-add-description">' . lang_get('description') . '</label>
+            <textarea id="quick-add-description" name="description" class="form-control input-sm" rows="4"></textarea>
+          </div>
+          <div class="form-group">
+            <label>' . lang_get('due_date') . '</label>
+            <div class="row">
+              <div class="col-xs-6">
+                <input type="date" id="quick-add-due-date" name="due_date" class="form-control input-sm" value="' . $t_today . '" />
+              </div>
+              <div class="col-xs-6">
+                <input type="time" id="quick-add-due-time" name="due_time" class="form-control input-sm" value="12:00" />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">' . lang_get('cancel') . '</button>
+          <input type="submit" name="submit" value="' . plugin_lang_get('submit_button') . '" class="btn btn-primary btn-sm" />
+        </div>
+      </form>
+    </div>
+  </div>
+</div>';
+    }
+}
