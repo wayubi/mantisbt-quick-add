@@ -78,7 +78,7 @@ class QuickAddPlugin extends MantisPlugin {
     line-height: 1;
     padding: 0;
     box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-    display: none;
+    display: block;
     touch-action: manipulation;
 }
 .quick-add-fab:active,
@@ -90,11 +90,6 @@ class QuickAddPlugin extends MantisPlugin {
     top: auto !important;
     left: auto !important;
     transform: none !important;
-}
-@media (max-width: 767px) {
-    .quick-add-fab {
-        display: block;
-    }
 }
 #quick-add-form .form-control {
     width: 100% !important;
