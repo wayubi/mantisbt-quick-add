@@ -41,6 +41,9 @@ class QuickAddPlugin extends MantisPlugin {
             $t_preferred = 1;
         } else {
             $t_preferred = helper_get_current_project();
+            if( $t_preferred === 0 ) {
+                $t_preferred = 1;
+            }
         }
 
         if( $t_preferred > 0
