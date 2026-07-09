@@ -63,6 +63,44 @@ class QuickAddPlugin extends MantisPlugin {
 
         $t_ajax_url = plugin_page('quick_add_ajax');
         return '
+<style>
+.quick-add-fab {
+    position: fixed !important;
+    bottom: 24px !important;
+    right: 24px !important;
+    top: auto !important;
+    left: auto !important;
+    z-index: 1050;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    font-size: 28px;
+    line-height: 1;
+    padding: 0;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    display: none;
+    touch-action: manipulation;
+}
+.quick-add-fab:active,
+.quick-add-fab:focus,
+.quick-add-fab:hover {
+    position: fixed !important;
+    bottom: 24px !important;
+    right: 24px !important;
+    top: auto !important;
+    left: auto !important;
+    transform: none !important;
+}
+@media (max-width: 767px) {
+    .quick-add-fab {
+        display: block;
+    }
+}
+#quick-add-form .form-control {
+    width: 100% !important;
+}
+</style>
+<button type="button" class="quick-add-fab btn btn-primary" title="' . plugin_lang_get('title') . '" data-toggle="modal" data-target="#quick-add-modal">+</button>
 <div class="modal fade" id="quick-add-modal" tabindex="-1" role="dialog" data-quick-add-ajax-url="' . $t_ajax_url . '">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
