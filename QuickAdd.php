@@ -94,6 +94,10 @@ class QuickAddPlugin extends MantisPlugin {
 #quick-add-form .form-control {
     width: 100% !important;
 }
+#quick-add-form .modal-footer button,
+#quick-add-form .modal-footer input {
+  height: auto;
+}
 </style>
 <button type="button" class="quick-add-fab btn btn-primary" title="' . plugin_lang_get('title') . '" data-toggle="modal" data-target="#quick-add-modal">+</button>
 <div class="modal fade" id="quick-add-modal" tabindex="-1" role="dialog" data-quick-add-ajax-url="' . $t_ajax_url . '">
@@ -139,7 +143,7 @@ class QuickAddPlugin extends MantisPlugin {
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">' . lang_get('cancel') . '</button>
+          <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">' . plugin_lang_get('cancel') . '</button>
           <input type="submit" name="submit" value="' . plugin_lang_get('submit_button') . '" class="btn btn-primary btn-sm" />
         </div>
       </form>
