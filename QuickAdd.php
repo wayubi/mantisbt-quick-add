@@ -35,21 +35,36 @@ class QuickAddPlugin extends MantisPlugin {
         $t_project_ids = user_get_accessible_projects($t_user_id);
 
         $t_default_project_id = 0;
-        foreach ($t_project_ids as $t_id) {
-            $t_can_report = access_has_project_level(config_get('report_bug_threshold', null, $t_user_id, $t_id), $t_id, $t_user_id);
-            if (!$t_can_report) {
-                continue;
-            }
-            if ($t_id == 1) {
-                $t_default_project_id = 1;
-                break;
-            }
-            if ($t_default_project_id === 0) {
-                $t_default_project_id = $t_id;
+
+        $t_page = basename( $_SERVER['SCRIPT_NAME'] );
+        if( $t_page === 'my_view_page.php' ) {
+            $t_preferred = 1;
+        } else {
+            $t_preferred = helper_get_current_project();
+        }
+
+        if( $t_preferred > 0
+            && access_has_project_level(
+                config_get( 'report_bug_threshold', null, $t_user_id, $t_preferred ),
+                $t_preferred, $t_user_id
+            )
+        ) {
+            $t_default_project_id = $t_preferred;
+        }
+
+        if( $t_default_project_id === 0 ) {
+            foreach( $t_project_ids as $t_id ) {
+                if( access_has_project_level(
+                    config_get( 'report_bug_threshold', null, $t_user_id, $t_id ),
+                    $t_id, $t_user_id
+                ) ) {
+                    $t_default_project_id = $t_id;
+                    break;
+                }
             }
         }
 
-        if ($t_default_project_id === 0) {
+        if( $t_default_project_id === 0 ) {
             return;
         }
 
